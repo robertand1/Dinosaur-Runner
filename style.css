@@ -1,0 +1,80 @@
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: white;
+}
+
+h2 {
+  color: black;
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+#scoreText {
+  color: black;
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+#game {
+  width: 600px;
+  height: 200px;
+  border-bottom: 3px solid black;
+  position: relative;
+  overflow: hidden;
+  background-color: white;
+}
+
+#dino {
+  width: 30px;
+  height: 30px;
+  background-color: black;
+  position: absolute;
+  bottom: 0;
+  left: 50px;
+}
+
+#obstacle {
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  position: absolute;
+  bottom: 0;
+  right: -20px;
+  animation: moveObstacle 1.5s infinite linear;
+}
+
+.jump {
+  animation: jumpAnim 0.5s linear;
+}
+
+@keyframes jumpAnim {
+  0% {
+    bottom: 0;
+  }
+  40% {
+    bottom: 80px;
+  }
+  50% {
+    bottom: 90px;
+  }
+  60% {
+    bottom: 80px;
+  }
+  100% {
+    bottom: 0;
+  }
+}
+
+@keyframes moveObstacle {
+  0% {
+    right: -20px;
+  }
+  100% {
+    right: 600px;
+  }
+}
