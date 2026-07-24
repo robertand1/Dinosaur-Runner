@@ -4,15 +4,19 @@ const statusText = document.getElementById("statusText");
 const scoreText = document.getElementById("scoreText");
 let isGameOver = false;
 let gameScore = 0;
+let dinoY = 0;
+let speedY = 0;
+let gravity = 0.6;
+let isJumping = false;
+let obstacleX = 600;
+let obstacleSpeed = 6;
 
 function jump() {
   if (isGameOver || dino.classList.contains("jump")) {
     return;
   }
-  dino.classList.add("jump");
-  setTimeout(() => {
-    dino.classList.remove("jump");
-  }, 500);
+  isJumping = true;
+  speedY = 10;
 }
 
 document.addEventListener("keydown", function (event) {
@@ -21,14 +25,28 @@ document.addEventListener("keydown", function (event) {
   }
 });
 
-obstacle.addEventListener("animationiteration", () => {
-  if (!isGameOver) {
+function gameLoop() {
+  if (isGameOver) {
+    return;
+  }
+  if (isJumping) {
+    dinoY += speedY;
+    speedY -= gravity;
+    if (dinoY <= 0) {
+      dinoY = 0;
+      isJumping = false;
+      speedY = 0;
+    }
+    dino.style.bottom = dinoY + "px";
+  }
+  obstacleX -= obstacleSpeed;
+  if (obstacleX < -20) {
+    obstacleX = 600;
     ++gameScore;
     scoreText.innerText = "Score: " + gameScore;
+    obstacleSpeed += 0.2;
   }
-});
-
-const checkCollision = setInterval(function () {
+  obstacle.style.left = obstacleX + "px";
   let dinoRect = dino.getBoundingClientRect();
   let obsRect = obstacle.getBoundingClientRect();
   if (
@@ -37,11 +55,13 @@ const checkCollision = setInterval(function () {
     dinoRect.bottom > obsRect.top
   ) {
     isGameOver = true;
-    obstacle.style.animationPlayState = "paused";
-    dino.style.animationPlayState = "paused";
     statusText.innerText = "Game Over!";
     statusText.style.color = "red";
     scoreText.style.color = "red";
-    clearInterval(checkCollision);
   }
-}, 10);
+  if (!isGameOver) {
+    requestAnimationFrame(gameLoop);
+  }
+}
+
+requestAnimationFrame(gameLoop);
