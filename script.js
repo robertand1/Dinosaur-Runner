@@ -12,7 +12,7 @@ let obstacleX = 600;
 let obstacleSpeed = 6;
 
 function jump() {
-  if (isGameOver || dino.classList.contains("jump")) {
+  if (isGameOver || isJumping) {
     return;
   }
   isJumping = true;
@@ -25,10 +25,7 @@ document.addEventListener("keydown", function (event) {
   }
 });
 
-function gameLoop() {
-  if (isGameOver) {
-    return;
-  }
+function updateDino() {
   if (isJumping) {
     dinoY += speedY;
     speedY -= gravity;
@@ -39,29 +36,53 @@ function gameLoop() {
     }
     dino.style.bottom = dinoY + "px";
   }
+}
+
+function updateScore() {
+  gameScore++;
+  scoreText.innerText = "Score: " + gameScore;
+  obstacleSpeed += 0.2;
+}
+
+function updateObstacle() {
   obstacleX -= obstacleSpeed;
   if (obstacleX < -20) {
     obstacleX = 600;
-    ++gameScore;
-    scoreText.innerText = "Score: " + gameScore;
-    obstacleSpeed += 0.2;
+    updateScore();
   }
   obstacle.style.left = obstacleX + "px";
+}
+
+function checkCollision() {
   let dinoRect = dino.getBoundingClientRect();
   let obsRect = obstacle.getBoundingClientRect();
-  if (
+  return (
     dinoRect.right > obsRect.left &&
     dinoRect.left < obsRect.right &&
     dinoRect.bottom > obsRect.top
-  ) {
-    isGameOver = true;
-    statusText.innerText = "Game Over!";
-    statusText.style.color = "red";
-    scoreText.style.color = "red";
+  );
+}
+
+function GameOver() {
+  isGameOver = true;
+  statusText.innerText = "Game Over!";
+  statusText.style.color = "red";
+  scoreText.style.color = "red";
+}
+
+function gameLoop() {
+  if (isGameOver) {
+    return;
+  }
+  updateDino();
+  updateObstacle();
+  if (checkCollision()) {
+    GameOver();
   }
   if (!isGameOver) {
     requestAnimationFrame(gameLoop);
   }
 }
 
+// Pornim jocul
 requestAnimationFrame(gameLoop);
