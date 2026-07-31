@@ -1,5 +1,5 @@
+const gameContainer = document.getElementById("game");
 const dino = document.getElementById("dino");
-const obstacle = document.getElementById("obstacle");
 const statusText = document.getElementById("statusText");
 const scoreText = document.getElementById("scoreText");
 let isGameOver = false;
@@ -8,8 +8,9 @@ let dinoY = 0;
 let speedY = 0;
 let gravity = 0.6;
 let isJumping = false;
-let obstacleX = 600;
+let activeObstacles = [];
 let obstacleSpeed = 6;
+let nextObstacle = 30;
 
 function jump() {
   if (isGameOver || isJumping) {
@@ -39,28 +40,47 @@ function updateDino() {
 }
 
 function updateScore() {
-  gameScore++;
+  ++gameScore;
   scoreText.innerText = "Score: " + gameScore;
-  obstacleSpeed += 0.2;
+  obstacleSpeed += 0.1;
 }
 
-function updateObstacle() {
-  obstacleX -= obstacleSpeed;
-  if (obstacleX < -20) {
-    obstacleX = 600;
-    updateScore();
+function spawnObstacle() {
+  let obsDiv = document.createElement("div");
+  obsDiv.classList.add("obstacle");
+  gameContainer.appendChild(obsDiv);
+  activeObstacles.push({
+    element: obsDiv,
+    x: 600,
+  });
+}
+
+function updateObstacles(obstaclesList) {
+  for (let i = obstaclesList.length - 1; i >= 0; --i) {
+    let obs = obstaclesList[i];
+    obs.x -= obstacleSpeed;
+    obs.element.style.left = obs.x + "px";
+    if (obs.x < -20) {
+      obs.element.remove();
+      obstaclesList.splice(i, 1);
+      updateScore();
+    }
   }
-  obstacle.style.left = obstacleX + "px";
 }
 
-function checkCollision() {
+function checkCollision(obstaclesList) {
   let dinoRect = dino.getBoundingClientRect();
-  let obsRect = obstacle.getBoundingClientRect();
-  return (
-    dinoRect.right > obsRect.left &&
-    dinoRect.left < obsRect.right &&
-    dinoRect.bottom > obsRect.top
-  );
+  for (let i = 0; i < obstaclesList.length; ++i) {
+    let obsRect = obstaclesList[i].element.getBoundingClientRect();
+    if (
+      dinoRect.right > obsRect.left &&
+      dinoRect.left < obsRect.right &&
+      dinoRect.bottom > obsRect.top
+    ) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function GameOver() {
@@ -74,9 +94,14 @@ function gameLoop() {
   if (isGameOver) {
     return;
   }
+  --nextObstacle;
+  if (nextObstacle <= 0) {
+    spawnObstacle();
+    nextObstacle = Math.floor(Math.random() * 50) + 40;
+  }
   updateDino();
-  updateObstacle();
-  if (checkCollision()) {
+  updateObstacles(activeObstacles);
+  if (checkCollision(activeObstacles)) {
     GameOver();
   }
   if (!isGameOver) {
