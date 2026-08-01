@@ -2,7 +2,7 @@ const gameContainer = document.getElementById("game");
 const dino = document.getElementById("dino");
 const statusText = document.getElementById("statusText");
 const scoreText = document.getElementById("scoreText");
-let isGameOver = false;
+let isgameOver = false;
 let gameScore = 0;
 let dinoY = 0;
 let speedY = 0;
@@ -13,7 +13,7 @@ let obstacleSpeed = 6;
 let nextObstacle = 30;
 
 function jump() {
-  if (isGameOver || isJumping) {
+  if (isgameOver || isJumping) {
     return;
   }
   isJumping = true;
@@ -83,15 +83,15 @@ function checkCollision(obstaclesList) {
   return false;
 }
 
-function GameOver() {
-  isGameOver = true;
+function gameOver() {
+  isgameOver = true;
   statusText.innerText = "Game Over!";
   statusText.style.color = "red";
   scoreText.style.color = "red";
 }
 
 function gameLoop() {
-  if (isGameOver) {
+  if (isgameOver) {
     return;
   }
   --nextObstacle;
@@ -102,7 +102,7 @@ function gameLoop() {
   updateDino();
   updateObstacles(activeObstacles);
   if (checkCollision(activeObstacles)) {
-    GameOver();
+    gameOver();
   }
   if (!isGameOver) {
     requestAnimationFrame(gameLoop);
