@@ -2,7 +2,7 @@ const gameContainer = document.getElementById("game");
 const dino = document.getElementById("dino");
 const statusText = document.getElementById("statusText");
 const scoreText = document.getElementById("scoreText");
-let isgameOver = false;
+let isGameOver = false;
 let gameScore = 0;
 let dinoY = 0;
 let speedY = 0;
@@ -13,7 +13,7 @@ let obstacleSpeed = 6;
 let nextObstacle = 30;
 
 function jump() {
-  if (isgameOver || isJumping) {
+  if (isGameOver || isJumping) {
     return;
   }
   isJumping = true;
@@ -84,14 +84,14 @@ function checkCollision(obstaclesList) {
 }
 
 function gameOver() {
-  isgameOver = true;
+  isGameOver = true;
   statusText.innerText = "Game Over!";
   statusText.style.color = "red";
   scoreText.style.color = "red";
 }
 
 function gameLoop() {
-  if (isgameOver) {
+  if (isGameOver) {
     return;
   }
   --nextObstacle;
