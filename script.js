@@ -11,6 +11,8 @@ let isJumping = false;
 let activeObstacles = [];
 let obstacleSpeed = 6;
 let nextObstacle = 30;
+let minSpawnFrequency = 40;
+let randomSpawnFrequency = 50;
 
 function jump() {
   if (isGameOver || isJumping) {
@@ -97,7 +99,8 @@ function gameLoop() {
   --nextObstacle;
   if (nextObstacle <= 0) {
     spawnObstacle();
-    nextObstacle = Math.floor(Math.random() * 50) + 40;
+    nextObstacle =
+      Math.floor(Math.random() * randomSpawnFrequency) + minSpawnFrequency;
   }
   updateDino();
   updateObstacles(activeObstacles);
